@@ -1,6 +1,6 @@
-# FlutFood-restaurant
+# flut_food_restaurant
 
-Flutter food ordering application
+Flutter Food order restuarant app
 
 ## Getting Started
 

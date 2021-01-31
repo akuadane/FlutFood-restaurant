@@ -1,6 +1,6 @@
-import 'package:flutfood_restaurant/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flut_food_restaurant/app.dart';
 
-void main() {
-  runApp(FlutFoodRestaurant());
+Future<void> main() async {
+  runApp(FlutFood());
 }
