@@ -1,4 +1,4 @@
-# Flut Food
+# FlutFood-restaurant
 
 Flutter food ordering application
 
