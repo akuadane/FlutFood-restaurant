@@ -28,16 +28,15 @@ class Item {
       name: json['name'],
       description: json['description'],
       image: json['image'],
-      categories: List<Category>.from(
-          json['categories'].map((i) => Category.fromJson(i))).toList(),
-      ingredients: List<Ingredient>.from(
-          json['ingredients'].map((i) => Ingredient.fromJson(i))).toList(),
+      categories: json['categories'] != null
+          ? List<Category>.from(
+              json['categories'].map((i) => Category.fromJson(i))).toList()
+          : [],
+      ingredients: json['ingredients'] != null
+          ? List<Ingredient>.from(
+              json['ingredients'].map((i) => Ingredient.fromJson(i))).toList()
+          : [],
       price: json['price'] * 1.0,
     );
-  }
-
-  @override
-  String toString() {
-    return "{id: $id name: $name price: $price ingredients: $ingredients categories: $categories image: $image}";
   }
 }

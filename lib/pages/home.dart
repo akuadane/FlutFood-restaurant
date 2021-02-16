@@ -1,3 +1,5 @@
+import 'package:flut_food_restaurant/food_item/model/add_update_screen_arguments.dart';
+import 'package:flut_food_restaurant/food_item/screens/add_update_food_item.dart';
 import 'package:flut_food_restaurant/food_item/screens/food_item_list.dart';
 import 'package:flutter/material.dart';
 
@@ -41,13 +43,23 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           onPressed: () {},
         ),
         title: Text(_index == 0 ? 'Orders' : 'Food Items'),
-        backgroundColor: Colors.transparent,
         bottom: _index == 0
             ? TabBar(
                 controller: _controller,
                 tabs: _tabs,
               )
             : null,
+        actions: [
+          _index == 1
+              ? IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.pushNamed(context, AddUpdateFoodItem.routeName,
+                        arguments: AddUpdateScreenArgument());
+                  },
+                )
+              : Container(),
+        ],
       ),
       body: _index == 0
           ? TabBarView(

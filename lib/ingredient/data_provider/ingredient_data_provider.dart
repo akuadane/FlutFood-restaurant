@@ -12,7 +12,8 @@ class IngredientDataProvider {
         assert(baseUrl != null);
 
   Future<List<Ingredient>> getIngredients() async {
-    final Response resp = await client.get("${baseUrl}ingredients");
+    final Response resp = await client
+        .get(await client.get(Uri.http(baseUrl, '/v1/admin/ingredients')));
     if (resp.statusCode == 200) {
       final ingredients = jsonDecode(resp.body) as List;
       return ingredients.map((e) => Ingredient.fromJson(e)).toList();
@@ -38,15 +39,17 @@ class IngredientDataProvider {
     }
   }
 
-  Future<void> updatIngredient(Ingredient ingredient) async {
-    final Response resp = await client
-        .put('${baseUrl}ingredients/${ingredient.id}', headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8;',
-    }, body: <String, dynamic>{
-      'id': ingredient.id,
-      'name': ingredient.name,
-      'description': ingredient.description,
-    });
+  Future<void> updateIngredient(Ingredient ingredient) async {
+    final Response resp = await client.put(
+        '${baseUrl}ingredients/${ingredient.id}',
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8;',
+        },
+        body: <String, dynamic>{
+          'id': ingredient.id,
+          'name': ingredient.name,
+          'description': ingredient.description,
+        });
     if (resp.statusCode != 201) {
       throw Exception("Failed to update ingredient: ${ingredient.id}");
     }

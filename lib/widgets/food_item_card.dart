@@ -13,10 +13,8 @@ class FoodItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          AspectRatio(
-            aspectRatio: 18.0 / 11.0,
-            child: Image.network(item.image),
-          ),
+          Row(),
+          Image.network(item.image, height: 250.0, width: double.infinity, fit: BoxFit.cover,),
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
             child: Column(
@@ -25,6 +23,8 @@ class FoodItemCard extends StatelessWidget {
                 Text(item.name),
                 SizedBox(height: 8.0),
                 Text('\$${item.price}'),
+                SizedBox(height: 8.0),
+                Text(item.description)
               ],
             ),
           ),

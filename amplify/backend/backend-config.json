@@ -1,0 +1,16 @@
+{
+  "auth": {
+    "flutfoodrestaurant2586be47": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
+  "storage": {
+    "flutfood": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
+  }
+}

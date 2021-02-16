@@ -20,7 +20,7 @@ class IngredientRepository {
   }
 
   Future<void> updateIngredient(Ingredient ingredient) {
-    return ingredientDataProvider.updatIngredient(ingredient);
+    return ingredientDataProvider.updateIngredient(ingredient);
   }
 
   Future<void> deleteIngredient(int id) {

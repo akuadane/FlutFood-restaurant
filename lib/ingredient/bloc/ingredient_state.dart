@@ -9,7 +9,17 @@ abstract class IngredientState extends Equatable {
   List<Object> get props => [ingredients];
 }
 
-class IngredientInitial extends IngredientState {
+class IngredientInitial extends IngredientState {}
+
+class IngredientLoadingState {}
+
+class IngredientLoadSuccessState extends IngredientState {
+  final List<Ingredient> ingredients;
+
+  IngredientLoadSuccessState({@required this.ingredients});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [ingredients];
 }
+
+class IngredientLoadFailedState extends IngredientState {}
