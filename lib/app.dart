@@ -1,5 +1,6 @@
 // File defines app wide settings and themes
 
+import 'package:flut_food_restaurant/authentication/screens/login.dart';
 import 'package:flut_food_restaurant/category/bloc/category_bloc.dart';
 import 'package:flut_food_restaurant/category/data_provider/category_data_provider.dart';
 import 'package:flut_food_restaurant/category/repository/category_respository.dart';
@@ -25,18 +26,17 @@ const ipAddress = '192.168.137.1:5000';
 
 class FlutFood extends StatefulWidget {
   static const String baseUrl = "192.168.137.1:5000";
-  final FoodItemDataProvider foodItemDataProvider =
-      FoodItemDataProvider(client: Client(), baseUrl: baseUrl);
-  final IngredientDataProvider ingredientDataProvider =
-      IngredientDataProvider(client: Client(), baseUrl: baseUrl);
-  final CategoryDataProvider categoryDataProvider =
-      CategoryDataProvider(client: Client(), baseUrl: baseUrl);
 
   @override
-  _FlutFoodState createState() => _FlutFoodState();
+  _FlutFoodState createState() => _FlutFoodState(client: Client(), baseUrl: baseUrl);
 }
 
 class _FlutFoodState extends State<FlutFood> {
+  final Client client;
+  final String baseUrl;
+
+  _FlutFoodState({@required this.client, @required this.baseUrl});
+
   void _configureAmplify() async {
     // Add Pinpoint and Cognito Plugins, or any other plugins you want to use
     // AmplifyAuthCognito authPlugin = AmplifyAuthCognito();
@@ -61,36 +61,59 @@ class _FlutFoodState extends State<FlutFood> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(
-            create: (context) => FoodItemBloc(
-                foodItemRepository: FoodItemRepository(
-                    dataProvider: widget.foodItemDataProvider))
-              ..add(LoadFoodItemsEvent())),
-        BlocProvider(
-            create: (context) => IngredientBloc(
-                ingredientRepository: IngredientRepository(
-                    ingredientDataProvider: widget.ingredientDataProvider))
-              ..add(LoadIngredientsEvent())),
-        BlocProvider(
-            create: (context) => CategoryBloc(
-                categoryRepository: CategoryRepository(
-                    categoryDataProvider: widget.categoryDataProvider))
-              ..add(LoadCategoriesEvent()))
+        RepositoryProvider(
+            create: (ctx) =>
+                CategoryDataProvider(client: client, baseUrl: baseUrl)),
+        RepositoryProvider(
+            create: (ctx) =>
+                IngredientDataProvider(client: client, baseUrl: baseUrl)),
+        RepositoryProvider(
+            create: (ctx) =>
+                FoodItemDataProvider(client: client, baseUrl: baseUrl))
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-          accentColor: Colors.deepOrange,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+              create: (context) =>
+              FoodItemBloc(
+                  foodItemRepository: FoodItemRepository(
+                      dataProvider: context.read<FoodItemDataProvider>()))
+                ..add(LoadFoodItemsEvent())),
+          BlocProvider(
+              create: (context) =>
+              IngredientBloc(
+                  ingredientRepository: IngredientRepository(
+                      ingredientDataProvider: context.read<IngredientDataProvider>()))
+                ..add(LoadIngredientsEvent())),
+          BlocProvider(
+              create: (context) =>
+              CategoryBloc(
+                  categoryRepository: CategoryRepository(
+                      categoryDataProvider: context.read<CategoryDataProvider>()))
+                ..add(LoadCategoriesEvent()))
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.deepPurple,
+            accentColor: Colors.deepOrange,
+          ),
+          home: Home(),
+          onGenerateRoute: _loginRoute,
+          initialRoute: "/login",
+          routes: {
+            FoodItemDetails.routeName: (context) => FoodItemDetails(),
+            AddUpdateFoodItem.routeName: (context) => AddUpdateFoodItem(),
+          },
         ),
-        home: Home(),
-        routes: {
-          FoodItemDetails.routeName: (context) => FoodItemDetails(),
-          AddUpdateFoodItem.routeName: (context) => AddUpdateFoodItem(),
-        },
       ),
     );
+  }
+  PageRoute _loginRoute(RouteSettings settings) {
+    if(settings.name == "/login"){
+      return MaterialPageRoute(builder: (ctx) => LoginPage());
+    }
   }
 }

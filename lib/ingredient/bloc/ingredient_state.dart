@@ -11,7 +11,7 @@ abstract class IngredientState extends Equatable {
 
 class IngredientInitial extends IngredientState {}
 
-class IngredientLoadingState {}
+class IngredientLoadingState extends IngredientState{}
 
 class IngredientLoadSuccessState extends IngredientState {
   final List<Ingredient> ingredients;

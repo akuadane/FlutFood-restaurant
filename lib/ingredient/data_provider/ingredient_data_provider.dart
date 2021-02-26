@@ -23,7 +23,8 @@ class IngredientDataProvider {
   }
 
   Future<Ingredient> getIngredient(int id) async {
-    final Response resp = await client.get("${baseUrl}ingredients/$id");
+    final Response resp = await client
+        .get(await client.get(Uri.http(baseUrl, 'v1/admin/ingredients/$id')));
     if (resp.statusCode == 200) {
       final ingredient = jsonDecode(resp.body);
       return Ingredient.fromJson(ingredient);
@@ -33,7 +34,8 @@ class IngredientDataProvider {
   }
 
   Future<void> deleteIngredient(int id) async {
-    final Response resp = await client.delete('${baseUrl}ingredients/$id');
+    final Response resp =
+        await client.delete(Uri.http(baseUrl, 'v1/admin/ingredients/$id'));
     if (resp.statusCode != 204) {
       throw Exception("Failed to delete food ingredient: $id");
     }
@@ -41,7 +43,7 @@ class IngredientDataProvider {
 
   Future<void> updateIngredient(Ingredient ingredient) async {
     final Response resp = await client.put(
-        '${baseUrl}ingredients/${ingredient.id}',
+        Uri.http(baseUrl, 'v1/admin/ingredients/${ingredient.id}'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8;',
         },
@@ -57,7 +59,7 @@ class IngredientDataProvider {
 
   Future<void> createIngredient(Ingredient ingredients) async {
     final Response resp = await client.post(
-      '${baseUrl}ingredients',
+      Uri.http(baseUrl, "v1/admin/ingredients"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

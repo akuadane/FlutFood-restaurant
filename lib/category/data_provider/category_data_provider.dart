@@ -11,7 +11,7 @@ class CategoryDataProvider {
   CategoryDataProvider({this.client, this.baseUrl});
 
   Future<List<Category>> getCategories() async {
-    final Response resp = await get("${baseUrl}categories");
+    final Response resp = await get(Uri.http(baseUrl, "categories"));
     if (resp.statusCode == 200) {
       final categories = jsonDecode(resp.body);
       return categories.map((c) => Category.fromJson(c)).toList();
@@ -20,7 +20,7 @@ class CategoryDataProvider {
   }
 
   Future<Category> getCategory(int id) async {
-    final Response resp = await get('${baseUrl}categories/$id');
+    final Response resp = await get(Uri.http(baseUrl, "categories"));
     if (resp.statusCode == 200) {
       return Category.fromJson(jsonDecode(resp.body));
     }
@@ -29,7 +29,7 @@ class CategoryDataProvider {
 
   Future<void> createCategory(Category cat) async {
     final Response resp = await post(
-      '${baseUrl}categories',
+      Uri.http(baseUrl, 'categories'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -44,15 +44,15 @@ class CategoryDataProvider {
     }
   }
 
-  Future<void> updateCategory(Category cat) async{
-    final Response resp = await put('${baseUrl}categories/${cat.id}');
+  Future<void> updateCategory(Category cat) async {
+    final Response resp = await put(Uri.http(baseUrl, 'categories/${cat.id}'));
     if (resp.statusCode != 204) {
       throw Exception('Failed to update category: ${cat.id}');
     }
   }
 
   Future<void> deleteCategory(int id) async {
-    final Response resp = await delete('${baseUrl}categories/$id');
+    final Response resp = await delete(Uri.http(baseUrl, 'categories/$id'));
     if (resp.statusCode != 204) {
       throw Exception('Failed to delete category: $id');
     }

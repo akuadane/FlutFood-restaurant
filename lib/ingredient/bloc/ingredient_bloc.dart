@@ -20,6 +20,20 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
   Stream<IngredientState> mapEventToState(
     IngredientEvent event,
   ) async* {
-    // TODO: implement mapEventToState
+    yield IngredientLoadingState();
+    if (event is LoadIngredientsEvent) {
+      yield await _mapLoadIngredientToState(event);
+    }
+  }
+
+  Future<IngredientState> _mapLoadIngredientToState(
+      LoadIngredientsEvent event) async {
+    try {
+      final ingredients = await ingredientRepository.getIngredients();
+      return IngredientLoadSuccessState(ingredients: ingredients);
+    } catch (e) {
+      print(e);
+      return IngredientLoadFailedState();
+    }
   }
 }
