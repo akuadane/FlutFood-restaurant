@@ -4,5 +4,5 @@ class AddUpdateScreenArgument {
   Role role;
   bool edit;
 
-  AddUpdateScreenArgument({this.role, this.edit});
+  AddUpdateScreenArgument({this.role, this.edit = false});
 }

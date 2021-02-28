@@ -12,6 +12,7 @@ import 'package:flut_food_restaurant/food_item/data_provider/food_item_data_prov
 import 'package:flut_food_restaurant/food_item/repository/food_item_repository.dart';
 import 'package:flut_food_restaurant/food_item/screens/add_update_food_item.dart';
 import 'package:flut_food_restaurant/food_item/screens/food_item_details.dart';
+import 'package:flut_food_restaurant/food_item/screens/food_item_list.dart';
 import 'package:flut_food_restaurant/ingredient/bloc/ingredient_bloc.dart';
 import 'package:flut_food_restaurant/ingredient/data_provider/ingredient_data_provider.dart';
 import 'package:flut_food_restaurant/ingredient/repository/ingredient_repository.dart';
@@ -22,17 +23,22 @@ import 'package:flut_food_restaurant/order/repository/order_repository.dart';
 import 'package:flut_food_restaurant/role/bloc/role_bloc.dart';
 import 'package:flut_food_restaurant/role/data_provider/role_data_provider.dart';
 import 'package:flut_food_restaurant/role/repository/role_respository.dart';
+import 'package:flut_food_restaurant/role/screens/add_update_role.dart';
+import 'package:flut_food_restaurant/role/screens/role_details.dart';
 import 'package:flut_food_restaurant/role/screens/role_list.dart';
+import 'package:flut_food_restaurant/user/bloc/user_bloc.dart';
 import 'package:flut_food_restaurant/user/data_provider/user_provider.dart';
+import 'package:flut_food_restaurant/user/models/add_update_user_argument.dart';
 import 'package:flut_food_restaurant/user/repository/user_repository.dart';
-import 'package:flut_food_restaurant/user/screens/users_list_screen.dart';
+import 'package:flut_food_restaurant/user/screens/add_update_user.dart';
+import 'package:flut_food_restaurant/user/screens/user_details.dart';
+import 'package:flut_food_restaurant/user/screens/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flut_food_restaurant/pages/home.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
-import 'package:image_picker/image_picker.dart';
+
 
 import 'amplifyconfiguration.dart';
 import 'food_item/bloc/food_item_bloc.dart';
@@ -138,6 +144,11 @@ class _FlutFoodState extends State<FlutFood> {
                       categoryDataProvider: widget.categoryDataProvider))
                 ..add(LoadCategoriesEvent())),
           BlocProvider(
+              create: (context) => UserBloc(
+                  userRepository: UserRepository(widget.userProvider))
+                ..add(LoadUsersEvent())),
+
+          BlocProvider(
               create: (context) => AuthenticationBloc(
                   authRepository:
                       AuthDataRepository(dataProvider: widget.authDataProvider),
@@ -152,11 +163,17 @@ class _FlutFoodState extends State<FlutFood> {
           onGenerateRoute: _ongenerateRoute,
           initialRoute: "/login",
           routes: {
-            '/users': (context) => UsersListScreen(),
+            '/users': (context) => UserListScreen(),
             '/roles': (context) => RoleListScreen(),
+            UserListScreen.routeName: (context) => UserListScreen(),
+            FoodItemList.routeName: (context) => FoodItemList(),
+            RoleListScreen.routeName: (context) => RoleListScreen(),
+            UserDetails.routeName: (context) => UserDetails(),
+            RoleDetails.routeName: (context) => RoleDetails(),
             SignupPage.routeName: (context) => SignupPage(),
             FoodItemDetails.routeName: (context) => FoodItemDetails(),
             AddUpdateFoodItem.routeName: (context) => AddUpdateFoodItem(),
+            AddUpdateRole.routeName: (context) => AddUpdateRole(),
           },
         ),
       ),
@@ -172,6 +189,10 @@ class _FlutFoodState extends State<FlutFood> {
         builder: (ctx) => Home(
           user: user,
         ),
+      );
+    } else if(settings.name == AddUpdateUser.routeName){
+      final AddUpdateUserArgument args = settings.arguments;
+      return MaterialPageRoute(builder: (_) => AddUpdateUser(user: args.user, edit: args.edit,)
       );
     }
   }

@@ -11,6 +11,9 @@ class UserRepository {
   Future<User> getUserByUserName(String username) async {
     return this.userProvider.getUserByUserName(username);
   }
+  Future<List<User>> getUsers() async {
+    return this.userProvider.getUsers();
+  }
 
   Future<User> createUser(User user) async {
     return this.userProvider.createUser(user);

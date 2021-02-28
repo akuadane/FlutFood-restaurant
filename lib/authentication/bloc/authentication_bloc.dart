@@ -38,9 +38,10 @@ class AuthenticationBloc
   }
   Future<AuthenticationState> _mapLogOutEventToState(LogOutEvent event) async {
     try {
-      // await authRepository.dataProvider
+      await authRepository.dataProvider.deleteUser();
+      return AuthenticationFailed();
     } catch(e){
-
+      print(e);
     }
   }
   Future<AuthenticationState> _mapLoginEventToState(LoginEvent event) async {
@@ -55,6 +56,7 @@ class AuthenticationBloc
       }
       if (user.password == event.password && authorized) {
         await authRepository.storeUser(user);
+        print("success");
         return AuthenticationSuccess(user: user);
       } else {
         throw Exception("Invalid password");

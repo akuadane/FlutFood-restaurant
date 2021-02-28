@@ -12,16 +12,17 @@ class RoleDataProvider {
   RoleDataProvider({this.client, this.baseUrl});
 
   Future<List<Role>> getRoles() async {
-    final Response resp = await get(Uri.http(baseUrl, "roles"));
+    final Response resp = await client.get(Uri.http(baseUrl, "v1/admin/roles"));
     if (resp.statusCode == 200) {
-      final roles = jsonDecode(resp.body);
+      final roles = jsonDecode(resp.body) as List;
+      print(roles);
       return roles.map((c) => Role.fromJson(c)).toList();
     }
     throw Exception("Failed to load roles");
   }
 
   Future<Role> getRole(int id) async {
-    final Response resp = await get(Uri.http(baseUrl, "roles"));
+    final Response resp = await client.get(Uri.http(baseUrl, "v1/admin/roles"));
     if (resp.statusCode == 200) {
       return Role.fromJson(jsonDecode(resp.body));
     }
@@ -29,8 +30,8 @@ class RoleDataProvider {
   }
 
   Future<void> createRole(Role cat) async {
-    final Response resp = await post(
-      Uri.http(baseUrl, 'roles'),
+    final Response resp = await client.post(
+      Uri.http(baseUrl, 'v1/admin/roles'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -45,14 +46,14 @@ class RoleDataProvider {
   }
 
   Future<void> updateRole(Role cat) async {
-    final Response resp = await put(Uri.http(baseUrl, 'roles/${cat.id}'));
+    final Response resp = await client.put(Uri.http(baseUrl, 'v1/admin/roles/${cat.id}'));
     if (resp.statusCode != 204) {
       throw Exception('Failed to update role: ${cat.id}');
     }
   }
 
   Future<void> deleteRole(int id) async {
-    final Response resp = await delete(Uri.http(baseUrl, 'roles/$id'));
+    final Response resp = await delete(Uri.http(baseUrl, 'v1/admin/roles/$id'));
     if (resp.statusCode != 204) {
       throw Exception('Failed to delete role: $id');
     }

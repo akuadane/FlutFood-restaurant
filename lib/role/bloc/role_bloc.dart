@@ -10,63 +10,67 @@ part 'role_state.dart';
 
 part 'role_event.dart';
 
-
 class RoleBloc extends Bloc<RoleEvent, RoleState> {
   final RoleRepository roleRepository;
 
-  RoleBloc({@required this.roleRepository})
-      : super(InitialRoleState());
+  RoleBloc({@required this.roleRepository}) : super(InitialRoleState());
 
   @override
   Stream<RoleState> mapEventToState(
     RoleEvent event,
   ) async* {
     yield RoleLoadingState();
-    if(state is RoleAddEvent){
+    print(event.runtimeType);
+    if (event is RoleAddEvent) {
       yield await _mapRoleAddEventToState(event);
-    }else if(state is RoleUpdateEvent) {
+    } else if (event is RoleUpdateEvent) {
       yield await _mapRoleUpdateEventToState(event);
-    }else if(state is RoleDeleteEvent) {
+    } else if (event is RoleDeleteEvent) {
       yield await _mapRoleDeleteEventToState(event);
-    }else if(state is LoadRolesEvent){
+    } else if (event is LoadRolesEvent) {
       yield await _mapRoleLoadToState(event);
     }
   }
-  Future<RoleState> _mapRoleAddEventToState(RoleAddEvent event) async{
+
+  Future<RoleState> _mapRoleAddEventToState(RoleAddEvent event) async {
     try {
       await roleRepository.createRole(event.role);
       final cats = await roleRepository.getRoles();
       return RoleLoadSuccessState(roles: cats);
-    }catch(e){
+    } catch (e) {
       print(e);
       return RoleLoadFailureState();
     }
   }
-  Future<RoleState> _mapRoleUpdateEventToState(RoleUpdateEvent event) async{
+
+  Future<RoleState> _mapRoleUpdateEventToState(RoleUpdateEvent event) async {
     try {
       await roleRepository.updateRole(event.role);
       final cats = await roleRepository.getRoles();
       return RoleLoadSuccessState(roles: cats);
-    }catch(e){
+    } catch (e) {
       print(e);
       return RoleLoadFailureState();
     }
   }
-  Future<RoleState> _mapRoleDeleteEventToState(RoleDeleteEvent event) async{
+
+  Future<RoleState> _mapRoleDeleteEventToState(RoleDeleteEvent event) async {
     try {
       await roleRepository.deleteRole(event.id);
       final cats = await roleRepository.getRoles();
       return RoleLoadSuccessState(roles: cats);
-    }catch(e){
+    } catch (e) {
       print(e);
       return RoleLoadFailureState();
     }
   }
-  Future<RoleState> _mapRoleLoadToState(LoadRolesEvent event) async{
+
+  Future<RoleState> _mapRoleLoadToState(LoadRolesEvent event) async {
+    print("entered");
     try {
       final cats = await roleRepository.getRoles();
       return RoleLoadSuccessState(roles: cats);
-    }catch(e){
+    } catch (e) {
       print(e);
       return RoleLoadFailureState();
     }

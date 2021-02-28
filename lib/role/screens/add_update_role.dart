@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class AddUpdateRole extends StatefulWidget {
-  static const String routeName = 'add-update-food-role';
+  static const String routeName = 'add-update-role';
 
   @override
   _AddUpdateRolestate createState() => _AddUpdateRolestate();

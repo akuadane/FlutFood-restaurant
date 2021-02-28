@@ -117,7 +117,7 @@ class User {
       phone: json['phone'],
       password: json['password'],
       roles: List<Role>.from(
-          json['roles']?.map((r) => Role.fromJson(r))?.toList()),
+        json['roles']?.map((r) => Role.fromJson(r))),
     );
   }
 
@@ -159,7 +159,19 @@ class Role {
     );
   }
 
-  Map toJson() => {"id": id, "name": name};
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Role &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
+
+  Map<String, dynamic> toJson() => {"id": id, "name": name};
 }
 
 class Order {

@@ -8,6 +8,7 @@ import 'package:flut_food_restaurant/category/bloc/category_bloc.dart';
 import 'package:flut_food_restaurant/food_item/bloc/bloc.dart';
 import 'package:flut_food_restaurant/food_item/model/add_update_screen_arguments.dart';
 import 'package:flut_food_restaurant/food_item/model/models.dart';
+import 'package:flut_food_restaurant/food_item/screens/food_item_list.dart';
 import 'package:flut_food_restaurant/ingredient/bloc/ingredient_bloc.dart';
 import 'package:flut_food_restaurant/models/models.dart';
 import 'package:flutter/material.dart';
@@ -278,10 +279,15 @@ class _AddUpdateFoodItemState extends State<AddUpdateFoodItem> {
                                     foodItem: Item.fromJson(_item)))
                                 : foodItemBloc.add(UpdateFoodItemEvent(
                                     foodItem: Item.fromJson(_item)));
+                            Future.delayed(Duration(seconds: 1), () {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            });
                             if (foodItemBloc.state
                                 is FoodItemsLoadFailedState) {
                               setState(() {
-                                _isLoading = false;
+
                               });
                             } else if (foodItemBloc.state
                                 is FoodItemLoadingState) {
@@ -293,8 +299,7 @@ class _AddUpdateFoodItemState extends State<AddUpdateFoodItem> {
                                   content: Text(args.edit
                                       ? 'Item updated successfully'
                                       : 'Item added successfully')));
-                              foodItemBloc.add(LoadFoodItemsEvent());
-                              Navigator.pop(context);
+                              Navigator.of(context).pushNamedAndRemoveUntil(FoodItemList.routeName, (route) => false);
                             }
                             // } catch (e) {
                             //   print("error: $e");

@@ -6,7 +6,7 @@ import 'package:flut_food_restaurant/food_item/screens/food_item_list.dart';
 import 'package:flut_food_restaurant/models/models.dart';
 import 'package:flut_food_restaurant/order/screens/order_list_screen.dart';
 import 'package:flut_food_restaurant/role/screens/role_list.dart';
-import 'package:flut_food_restaurant/user/screens/users_list_screen.dart';
+import 'package:flut_food_restaurant/user/screens/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -74,21 +74,21 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   icon: Icon(Icons.logout),
                   onPressed: () {
                     context.read<AuthenticationBloc>().add(LogOutEvent());
-                    Future.delayed(Duration(seconds: 0), () {
-                      final state = context.read<AuthenticationBloc>().state;
-                      if (state is AuthenticationFailed) {
-                        Navigator.pushReplacementNamed(
-                            context, LoginPage.routeName);
-                      }
-                    });
                   },
                 ),
         ],
       ),
       body: _index == 0
-          ? TabBarView(
-              controller: _controller,
-              children: _tabViews,
+          ? BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (_, state) {
+                if (state is AuthenticationFailed) {
+                  Navigator.pushReplacementNamed(context, LoginPage.routeName);
+                }
+              },
+              child: TabBarView(
+                controller: _controller,
+                children: _tabViews,
+              ),
             )
           : FoodItemList(),
       bottomNavigationBar: BottomNavigationBar(
@@ -130,7 +130,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   color: Colors.white,
                 )
               ],
-
             ),
             Column(
               children: [
@@ -139,10 +138,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   title: Text('Users'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => UsersListScreen())
-                    );
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => UserListScreen()));
                   },
                 ),
                 ListTile(
@@ -150,10 +147,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   title: Text('Roles'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_)=> RoleListScreen())
-                    );
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => RoleListScreen()));
                   },
                 ),
                 Divider(
