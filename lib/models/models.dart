@@ -116,8 +116,21 @@ class User {
       email: json['email'],
       phone: json['phone'],
       password: json['password'],
-      roles: json['roles']?.map((r) => Role.fromJson(r))?.toList(),
+      roles: List<Role>.from(
+          json['roles']?.map((r) => Role.fromJson(r))?.toList()),
     );
+  }
+
+  Map<String, dynamic> toJson(User user) {
+    return {
+      'id': user.id,
+      'username': user.userName,
+      'fullname': user.fullName,
+      'email': user.email,
+      'phone': user.phone,
+      'password': user.password,
+      'roles': user.roles,
+    };
   }
 
   User copyWith({id, userName, fullName, email, phone, password, roles}) {
@@ -144,5 +157,36 @@ class Role {
       id: json['id'],
       name: json['name'],
     );
+  }
+
+  Map toJson() => {"id": id, "name": name};
+}
+
+class Order {
+  int id, quantity, userId, itemId;
+  String orderState;
+
+  Order({
+    this.id,
+    @required this.quantity,
+    @required this.itemId,
+    @required this.orderState,
+    @required this.userId,
+  });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json["id"],
+      quantity: json["quantity"],
+      itemId: json["item_id"],
+      orderState: json["order_state"],
+      userId: json["user_id"],
+    );
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Order {id: $id, user_id: $userId, item_id: $itemId, quantity: $quantity, order_state: $orderState}";
   }
 }

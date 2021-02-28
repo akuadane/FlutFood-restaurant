@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flut_food_restaurant/api_config_files.dart';
 import 'package:flut_food_restaurant/food_item/model/models.dart';
+import 'package:flut_food_restaurant/models/models.dart';
 import 'package:http/http.dart';
 
 class FoodItemDataProvider {
@@ -13,7 +15,7 @@ class FoodItemDataProvider {
 
   Future<List<Item>> getFoodItems() async {
     final Response resp =
-        await client.get(Uri.http(baseUrl, '/v1/admin/items'));
+        await client.get(Uri.http(baseUrl, '/v1/admin/items'), headers: <String, String> {'api-key': adminApiKey});
     if (resp.statusCode == 200) {
       final items = jsonDecode(resp.body) as List;
       return items.map((e) => Item.fromJson(e)).toList();
@@ -25,7 +27,7 @@ class FoodItemDataProvider {
 
   Future<Item> getFoodItem(int id) async {
     final Response resp =
-        await client.get(Uri.http(baseUrl, '/v1/admin/items/items/$id'));
+        await client.get(Uri.http(baseUrl, '/v1/admin/items/$id'),headers: <String, String> {'api-key': adminApiKey});
     if (resp.statusCode == 200) {
       final item = jsonDecode(resp.body);
       return Item.fromJson(item);
@@ -36,7 +38,7 @@ class FoodItemDataProvider {
 
   Future<void> deleteFoodItem(int id) async {
     final Response resp =
-        await client.delete(Uri.http(baseUrl, '/v1/admin/items/$id'));
+        await client.delete(Uri.http(baseUrl, '/v1/admin/items/$id'), headers: <String, String> {'api-key': adminApiKey});
     if (resp.statusCode != 204) {
       throw Exception("Failed to delete food item: $id");
     }
@@ -47,6 +49,7 @@ class FoodItemDataProvider {
         Uri.http(baseUrl, '/v1/admin/items/${item.id}'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'api-key': adminApiKey
         },
         body: jsonEncode(<String, dynamic>{
           'id': item.id,
@@ -67,6 +70,7 @@ class FoodItemDataProvider {
     final Response resp = await client.post(
       Uri.http(baseUrl, '/v1/admin/items'),
       headers: <String, String>{
+        'api-key': adminApiKey,
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{

@@ -1,9 +1,22 @@
+import 'package:flut_food_restaurant/authentication/bloc/authentication_bloc.dart';
+import 'package:flut_food_restaurant/authentication/screens/login.dart';
 import 'package:flut_food_restaurant/food_item/model/add_update_screen_arguments.dart';
 import 'package:flut_food_restaurant/food_item/screens/add_update_food_item.dart';
 import 'package:flut_food_restaurant/food_item/screens/food_item_list.dart';
+import 'package:flut_food_restaurant/models/models.dart';
+import 'package:flut_food_restaurant/order/screens/order_list_screen.dart';
+import 'package:flut_food_restaurant/role/screens/role_list.dart';
+import 'package:flut_food_restaurant/user/screens/users_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Home extends StatefulWidget {
+  final User user;
+
+  static const String routeName = "/home";
+
+  Home({@required this.user});
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -29,19 +42,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     ),
   ];
   List<Widget> _tabViews = [
-    Text('PENDING ORDERS'),
-    Text('PROCESSING ORDERS'),
-    Text('PROCESSED ORDERS'),
+    OrderListScreen(orderType: "PENDING"),
+    OrderListScreen(orderType: "PROCESSING"),
+    OrderListScreen(orderType: "PROCESSED"),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final user =
+        (context.read<AuthenticationBloc>().state as AuthenticationSuccess)
+            ?.user;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {},
-        ),
         title: Text(_index == 0 ? 'Orders' : 'Food Items'),
         bottom: _index == 0
             ? TabBar(
@@ -58,7 +70,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         arguments: AddUpdateScreenArgument());
                   },
                 )
-              : Container(),
+              : IconButton(
+                  icon: Icon(Icons.logout),
+                  onPressed: () {
+                    context.read<AuthenticationBloc>().add(LogOutEvent());
+                    Future.delayed(Duration(seconds: 0), () {
+                      final state = context.read<AuthenticationBloc>().state;
+                      if (state is AuthenticationFailed) {
+                        Navigator.pushReplacementNamed(
+                            context, LoginPage.routeName);
+                      }
+                    });
+                  },
+                ),
         ],
       ),
       body: _index == 0
@@ -82,6 +106,77 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             label: "Items",
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              currentAccountPicture: CircleAvatar(
+                radius: 35.0,
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.add_a_photo,
+                  size: 32.0,
+                ),
+              ),
+              accountName: Text(
+                user.fullName,
+                style: TextStyle(fontSize: 24.0),
+              ),
+              accountEmail: Text(user.email),
+              otherAccountsPictures: <Widget>[
+                Icon(
+                  Icons.bookmark_border,
+                  color: Colors.white,
+                )
+              ],
+
+            ),
+            Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.group_add),
+                  title: Text('Users'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => UsersListScreen())
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.group_add),
+                  title: Text('Roles'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_)=> RoleListScreen())
+                    );
+                  },
+                ),
+                Divider(
+                  color: Colors.grey,
+                ),
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Setting'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                AboutListTile(
+                  icon: Icon(Icons.info_outline),
+                  applicationName: 'Flut Food',
+                  applicationVersion: '1.0.0',
+                  applicationLegalese:
+                      'Flut Food restaurant application, developed by the best team in section 1',
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

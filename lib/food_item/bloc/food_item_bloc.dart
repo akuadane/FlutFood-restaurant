@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flut_food_restaurant/food_item/model/models.dart';
 import 'package:flut_food_restaurant/food_item/repository/food_item_repository.dart';
+import 'package:flut_food_restaurant/models/models.dart';
 import 'package:flutter/foundation.dart';
 
 part 'food_item_event.dart';

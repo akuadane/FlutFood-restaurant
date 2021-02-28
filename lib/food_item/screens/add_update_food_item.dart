@@ -9,6 +9,7 @@ import 'package:flut_food_restaurant/food_item/bloc/bloc.dart';
 import 'package:flut_food_restaurant/food_item/model/add_update_screen_arguments.dart';
 import 'package:flut_food_restaurant/food_item/model/models.dart';
 import 'package:flut_food_restaurant/ingredient/bloc/ingredient_bloc.dart';
+import 'package:flut_food_restaurant/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';

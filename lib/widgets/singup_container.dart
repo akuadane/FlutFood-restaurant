@@ -1,11 +1,21 @@
+import 'dart:math';
 
+import 'package:flut_food_restaurant/authentication/bloc/authentication_bloc.dart';
 import 'package:flut_food_restaurant/colors.dart';
 import 'package:flut_food_restaurant/constants.dart';
+import 'package:flut_food_restaurant/models/models.dart';
+import 'package:flut_food_restaurant/pages/home.dart';
 import 'package:flut_food_restaurant/services/container_clipper.dart';
 import 'package:flut_food_restaurant/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupContainer extends StatefulWidget {
+  final VoidCallback onToggle;
+
+  SignupContainer({this.onToggle});
+
   @override
   _SignupContainerState createState() => _SignupContainerState();
 }
@@ -13,6 +23,7 @@ class SignupContainer extends StatefulWidget {
 class _SignupContainerState extends State<SignupContainer> {
   String email = '';
   String password = '';
+  String fullName = '';
   bool visible = false;
 
   void toggleVisibility() {
@@ -57,7 +68,7 @@ class _SignupContainerState extends State<SignupContainer> {
                             Icons.account_circle,
                             color: Colors.white,
                           )),
-                      onChanged: (value) => email = value,
+                      onChanged: (value) => fullName = value,
                     ),
                   ),
                   Padding(
@@ -104,7 +115,7 @@ class _SignupContainerState extends State<SignupContainer> {
                     value: true,
                     onChanged: (value) {},
                     title: Text(
-                      'Yes! I Agree all Terms and Condtions',
+                      'Yes! I Agree all Terms and Conditions',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -112,7 +123,35 @@ class _SignupContainerState extends State<SignupContainer> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: RoundedButton(
                       text: 'Sign Up',
-                      onPressed: () {},
+                      onPressed: () async {
+                        widget.onToggle();
+                        context.read<AuthenticationBloc>()
+                          ..add(SignUpEvent(
+                              user: User(
+                                roles: [
+                                  Role(id: 1, name: "admin"),
+                                  Role(id: 2, name: "user"),
+                                ],
+                                  fullName: fullName,
+                                  userName: email,
+                                  email: email,
+                                  password: password,
+                                  phone: Random()
+                                      .nextInt(1000000000)
+                                      .toString())));
+                        Future.delayed(Duration(seconds: 0), () {
+                          if (context.read<AuthenticationBloc>().state
+                              is AuthenticationSuccess) {
+                            widget.onToggle();
+                            Navigator.pop(context, true);
+                          } else if (context.read<AuthenticationBloc>().state
+                              is AuthenticationFailed) {
+                            widget.onToggle();
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text("Sign up not successful")));
+                          }
+                        });
+                      },
                       color: Colors.white,
                       labelColor: kSecondaryColor,
                     ),

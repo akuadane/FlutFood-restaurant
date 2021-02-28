@@ -1,5 +1,6 @@
 import 'package:flut_food_restaurant/food_item/data_provider/food_item_data_provider.dart';
 import 'package:flut_food_restaurant/food_item/model/models.dart';
+import 'package:flut_food_restaurant/models/models.dart';
 import 'package:flutter/cupertino.dart';
 
 class FoodItemRepository {

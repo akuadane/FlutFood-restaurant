@@ -13,7 +13,10 @@ class LoginEvent extends AuthenticationEvent {
   @override
   List<Object> get props => [email, password];
 }
-
+class LogOutEvent extends AuthenticationEvent {
+  @override
+  List<Object> get props => [];
+}
 class SignUpEvent extends AuthenticationEvent {
   final User user;
 
@@ -21,4 +24,9 @@ class SignUpEvent extends AuthenticationEvent {
 
   @override
   List<Object> get props => [user];
+}
+
+class GetAuth extends AuthenticationEvent {
+  @override
+  List<Object> get props => [];
 }

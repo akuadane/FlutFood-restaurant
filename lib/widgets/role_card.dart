@@ -2,10 +2,10 @@ import 'package:flut_food_restaurant/food_item/model/models.dart';
 import 'package:flut_food_restaurant/models/models.dart';
 import 'package:flutter/material.dart';
 
-class FoodItemCard extends StatelessWidget {
-  final Item item;
+class RoleCard extends StatelessWidget {
+  final Role role;
 
-  const FoodItemCard({this.item});
+  const RoleCard({this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -15,17 +15,13 @@ class FoodItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(),
-          Image.network(item.image, height: 250.0, width: double.infinity, fit: BoxFit.cover,),
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(item.name),
+                Text(role.name),
                 SizedBox(height: 8.0),
-                Text('\$${item.price}'),
-                SizedBox(height: 8.0),
-                Text(item.description)
               ],
             ),
           ),

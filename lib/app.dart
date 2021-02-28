@@ -1,6 +1,10 @@
 // File defines app wide settings and themes
 
+import 'package:flut_food_restaurant/authentication/bloc/authentication_bloc.dart';
+import 'package:flut_food_restaurant/authentication/data_provider/auth_data_provider.dart';
+import 'package:flut_food_restaurant/authentication/repository.auth_data_repository.dart';
 import 'package:flut_food_restaurant/authentication/screens/login.dart';
+import 'package:flut_food_restaurant/authentication/screens/signup.dart';
 import 'package:flut_food_restaurant/category/bloc/category_bloc.dart';
 import 'package:flut_food_restaurant/category/data_provider/category_data_provider.dart';
 import 'package:flut_food_restaurant/category/repository/category_respository.dart';
@@ -11,6 +15,17 @@ import 'package:flut_food_restaurant/food_item/screens/food_item_details.dart';
 import 'package:flut_food_restaurant/ingredient/bloc/ingredient_bloc.dart';
 import 'package:flut_food_restaurant/ingredient/data_provider/ingredient_data_provider.dart';
 import 'package:flut_food_restaurant/ingredient/repository/ingredient_repository.dart';
+import 'package:flut_food_restaurant/models/models.dart';
+import 'package:flut_food_restaurant/order/bloc/bloc.dart';
+import 'package:flut_food_restaurant/order/data_provider/data_provider.dart';
+import 'package:flut_food_restaurant/order/repository/order_repository.dart';
+import 'package:flut_food_restaurant/role/bloc/role_bloc.dart';
+import 'package:flut_food_restaurant/role/data_provider/role_data_provider.dart';
+import 'package:flut_food_restaurant/role/repository/role_respository.dart';
+import 'package:flut_food_restaurant/role/screens/role_list.dart';
+import 'package:flut_food_restaurant/user/data_provider/user_provider.dart';
+import 'package:flut_food_restaurant/user/repository/user_repository.dart';
+import 'package:flut_food_restaurant/user/screens/users_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
@@ -25,18 +40,29 @@ import 'food_item/bloc/food_item_bloc.dart';
 const ipAddress = '192.168.137.1:5000';
 
 class FlutFood extends StatefulWidget {
-  static const String baseUrl = "192.168.137.1:5000";
+  final CategoryDataProvider categoryDataProvider;
+  final FoodItemDataProvider foodItemDataProvider;
+  final IngredientDataProvider ingredientDataProvider;
+  final AuthDataProvider authDataProvider;
+  final UserProvider userProvider;
+  final OrderProvider orderProvider;
+  final RoleDataProvider roleDataProvider;
+
+  FlutFood({
+    this.categoryDataProvider,
+    this.foodItemDataProvider,
+    this.ingredientDataProvider,
+    this.authDataProvider,
+    this.userProvider,
+    this.orderProvider,
+    this.roleDataProvider,
+  });
 
   @override
-  _FlutFoodState createState() => _FlutFoodState(client: Client(), baseUrl: baseUrl);
+  _FlutFoodState createState() => _FlutFoodState();
 }
 
 class _FlutFoodState extends State<FlutFood> {
-  final Client client;
-  final String baseUrl;
-
-  _FlutFoodState({@required this.client, @required this.baseUrl});
-
   void _configureAmplify() async {
     // Add Pinpoint and Cognito Plugins, or any other plugins you want to use
     // AmplifyAuthCognito authPlugin = AmplifyAuthCognito();
@@ -63,36 +89,59 @@ class _FlutFoodState extends State<FlutFood> {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(
-            create: (ctx) =>
-                CategoryDataProvider(client: client, baseUrl: baseUrl)),
-        RepositoryProvider(
-            create: (ctx) =>
-                IngredientDataProvider(client: client, baseUrl: baseUrl)),
-        RepositoryProvider(
-            create: (ctx) =>
-                FoodItemDataProvider(client: client, baseUrl: baseUrl))
+        RepositoryProvider.value(
+          value: widget.ingredientDataProvider,
+        ),
+        RepositoryProvider.value(
+          value: widget.roleDataProvider,
+        ),
+        RepositoryProvider.value(
+          value: widget.foodItemDataProvider,
+        ),
+        RepositoryProvider.value(
+          value: widget.categoryDataProvider,
+        ),
+        RepositoryProvider.value(
+          value: widget.authDataProvider,
+        ),
+        RepositoryProvider.value(
+          value: widget.userProvider,
+        ),
+        RepositoryProvider.value(
+          value: widget.orderProvider,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-              create: (context) =>
-              FoodItemBloc(
+              create: (context) => FoodItemBloc(
                   foodItemRepository: FoodItemRepository(
-                      dataProvider: context.read<FoodItemDataProvider>()))
+                      dataProvider: widget.foodItemDataProvider))
                 ..add(LoadFoodItemsEvent())),
           BlocProvider(
-              create: (context) =>
-              IngredientBloc(
-                  ingredientRepository: IngredientRepository(
-                      ingredientDataProvider: context.read<IngredientDataProvider>()))
-                ..add(LoadIngredientsEvent())),
+              create: (context) => RoleBloc(
+                  roleRepository:
+                      RoleRepository(roleDataProvider: widget.roleDataProvider))
+                ..add(LoadRolesEvent())),
           BlocProvider(
               create: (context) =>
-              CategoryBloc(
+                  OrderBloc(OrderRepository(widget.orderProvider))
+                    ..add(OrderLoad())),
+          BlocProvider(
+              create: (context) => IngredientBloc(
+                  ingredientRepository: IngredientRepository(
+                      ingredientDataProvider: widget.ingredientDataProvider))
+                ..add(LoadIngredientsEvent())),
+          BlocProvider(
+              create: (context) => CategoryBloc(
                   categoryRepository: CategoryRepository(
-                      categoryDataProvider: context.read<CategoryDataProvider>()))
-                ..add(LoadCategoriesEvent()))
+                      categoryDataProvider: widget.categoryDataProvider))
+                ..add(LoadCategoriesEvent())),
+          BlocProvider(
+              create: (context) => AuthenticationBloc(
+                  authRepository:
+                      AuthDataRepository(dataProvider: widget.authDataProvider),
+                  userRepository: UserRepository(widget.userProvider))),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -100,10 +149,12 @@ class _FlutFoodState extends State<FlutFood> {
             primarySwatch: Colors.deepPurple,
             accentColor: Colors.deepOrange,
           ),
-          home: Home(),
-          onGenerateRoute: _loginRoute,
+          onGenerateRoute: _ongenerateRoute,
           initialRoute: "/login",
           routes: {
+            '/users': (context) => UsersListScreen(),
+            '/roles': (context) => RoleListScreen(),
+            SignupPage.routeName: (context) => SignupPage(),
             FoodItemDetails.routeName: (context) => FoodItemDetails(),
             AddUpdateFoodItem.routeName: (context) => AddUpdateFoodItem(),
           },
@@ -111,9 +162,17 @@ class _FlutFoodState extends State<FlutFood> {
       ),
     );
   }
-  PageRoute _loginRoute(RouteSettings settings) {
-    if(settings.name == "/login"){
+
+  PageRoute _ongenerateRoute(RouteSettings settings) {
+    if (settings.name == "/login") {
       return MaterialPageRoute(builder: (ctx) => LoginPage());
+    } else if (settings.name == Home.routeName) {
+      final User user = settings.arguments;
+      return MaterialPageRoute(
+        builder: (ctx) => Home(
+          user: user,
+        ),
+      );
     }
   }
 }
