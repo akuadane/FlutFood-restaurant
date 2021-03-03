@@ -1,0 +1,1 @@
+export 'food_item_data_provider.dart';

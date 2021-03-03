@@ -28,6 +28,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.read<OrderBloc>().add(OrderLoad());
     return Scaffold(
       backgroundColor: Colors.white70,
       body: SafeArea(

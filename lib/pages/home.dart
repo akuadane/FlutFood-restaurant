@@ -137,7 +137,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   leading: Icon(Icons.group_add),
                   title: Text('Users'),
                   onTap: () {
-                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (_) => UserListScreen()));
                   },
@@ -146,7 +145,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   leading: Icon(Icons.group_add),
                   title: Text('Roles'),
                   onTap: () {
-                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (_) => RoleListScreen()));
                   },

@@ -1,9 +1,10 @@
-import 'package:flutfood_restaurant/screens/components/already_have_an_account_acheck.dart';
-import 'file:///C:/Users/tsede/AndroidStudioProjects/AMPLab/FlutFood-restaurant/lib/screens/login/background.dart';
-import 'package:flutfood_restaurant/screens/components/rounded_button.dart';
-import 'package:flutfood_restaurant/screens/components/rounded_input_field.dart';
-import 'package:flutfood_restaurant/screens/components/rounded_password_field.dart';
-import 'package:flutfood_restaurant/screens/signup.dart';
+
+import 'package:flut_food_restaurant/screens/components/already_have_an_account_acheck.dart';
+import 'package:flut_food_restaurant/screens/components/rounded_button.dart';
+import 'package:flut_food_restaurant/screens/components/rounded_input_field.dart';
+import 'package:flut_food_restaurant/screens/components/rounded_password_field.dart';
+import 'package:flut_food_restaurant/screens/login/background.dart';
+import 'package:flut_food_restaurant/screens/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

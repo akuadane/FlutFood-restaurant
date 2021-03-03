@@ -9,6 +9,7 @@ class FoodItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<FoodItemBloc>().add(LoadFoodItemsEvent());
     return Scaffold(
       body: BlocBuilder<FoodItemBloc, FoodItemState>(
         builder: (BuildContext context, state) {
